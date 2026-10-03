@@ -1,5 +1,15 @@
 cmake_minimum_required(VERSION 3.22)
+if(APPLE)
+    set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "" FORCE)  # Apple Silicon + Intel
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "" FORCE)
+endif()
 project(MeowSynth VERSION 1.0.0)
+
+if(APPLE)
+    set(MEOW_FORMATS VST3 AU Standalone)
+else()
+    set(MEOW_FORMATS ${MEOW_FORMATS})
+endif()
 
 # JUCE is fetched automatically on first configure
 include(FetchContent)
@@ -18,7 +28,7 @@ juce_add_plugin(MeowSynth
     COPY_PLUGIN_AFTER_BUILD FALSE
     PLUGIN_MANUFACTURER_CODE Meow
     PLUGIN_CODE Mwsy
-    FORMATS VST3 Standalone
+    FORMATS ${MEOW_FORMATS}
     PRODUCT_NAME "MeowSynth")
 
 file(GLOB FRAMES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Assets/frames/*.png")
